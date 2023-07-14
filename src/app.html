@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<link rel="icon" href="%sveltekit.assets%/favicon.png" />
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet.locatecontrol/dist/L.Control.Locate.min.css" />
+		<link rel="stylesheet" href="node_modules/leaflet-search/dist/leaflet-search.src.css" />
+		<meta name="viewport" content="width=device-width" />
+		<style type="text/css" href="static/app.css"></style>
+		<!-- Google Tag Manager -->
+		<script>
+			(function (w, d, s, l, i) {
+				w[l] = w[l] || [];
+				w[l].push({ 'gtm.start': new Date().getTime(), event: 'gtm.js' });
+				var f = d.getElementsByTagName(s)[0],
+					j = d.createElement(s),
+					dl = l != 'dataLayer' ? '&l=' + l : '';
+				j.async = true;
+				j.src = 'https://www.googletagmanager.com/gtm.js?id=' + i + dl;
+				f.parentNode.insertBefore(j, f);
+			})(window, document, 'script', 'dataLayer', 'GTM-MVXMPBL');
+		</script>
+		<!-- End Google Tag Manager -->
+		<title>Floyd County Water Department</title>
+		%sveltekit.head%
+	</head>
+	<body style="margin:0">
+		<div>%sveltekit.body%</div>
+	</body>
+	<!-- Google Tag Manager (noscript) -->
+	<noscript
+		><iframe
+			src="https://www.googletagmanager.com/ns.html?id=GTM-MVXMPBL"
+			height="0"
+			width="0"
+			style="display: none; visibility: hidden"
+		></iframe
+	></noscript>
+	<!-- End Google Tag Manager (noscript) -->
+</html>
