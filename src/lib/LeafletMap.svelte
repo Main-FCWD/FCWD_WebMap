@@ -169,39 +169,32 @@
 				offset: [10, 0]
 			};
 
-			function addMarkersToMap(map, meters) {
+			async function addMarkersToMap(map, meters) {
 				var routeLayers = {};
 				var conditionLayers = {};
-				let DHpulseicon = L.icon.pulse({
-					iconsize: [12, 12],
-					color: 'DarkRed',
-					fillColor: 'DarkRed',
-					animate: true
-				});
+				var nullLayer = {};
 
-				let MRpulseicon = L.icon.pulse({
-					iconSize: [12, 12],
-					color: 'GoldenRod',
-					fillColor: 'GoldenRod',
-					animate: true
-				})
+				function ConditionColor(meterCondition) {
+					if (meterCondition == 'Dead Head') {
+						return 'DarkRed';
+					}
+					if (meterCondition == 'Manual Read') {
+						return 'GoldenRod';
+					}
+					if (meterCondition == 'Error Code') {
+						return 'Orange';
+					}
+					if (meterCondition == 'Crew Needed') {
+						 return 'Black';
+					}
 
-				let ECpulseicon = L.icon.pulse({
-					iconSize: [12, 12],
-					color: 'Orange',
-					fillColor: 'Orange',
-					animate: true
-				})
-
-				let CNpulseicon = L.icon.pulse({
-					iconSize: [12, 12],
-					color: 'Black',
-					fillColor: 'Black',
-					animate: true
-				})
+				}
+	
 
 				meters.forEach((meter) => {
 					var GPSRoute = meter.GPS.Route;
+					var meterCondition = ([meter.Condition,]);
+
 					const markerIcon = L.icon({
 						iconUrl: `https://raw.githubusercontent.com/Main-FCWD/FloydWebMap/main/static/Data/markers/rt${GPSRoute}.svg`,
 						iconSize: [25, 25] // Adjust the size according to your marker images
@@ -211,40 +204,47 @@
 						.bindTooltip(meter.Address, tooltipOptions)
 						.openTooltip();
 
-					var conditionMarker = L.marker([meter.GPS.Latitude, meter.GPS.Longitude]);
-
-
-					if (meter.Condition == 'Dead Head') {
-						conditionMarker = L.marker({icon: DHpulseicon})
-					} else if (meter.Condition == 'Manual Read') {
-						conditionMarker = L.marker({icon: MRpulseicon})
-					} else if (meter.Condition == 'Error Code') {
-						conditionMarker = L.marker({icon: ECpulseicon })
-					} else if (meter.Condition == 'Crew Needed') {
-						conditionMarker = L.marker({icon: CNpulseicon })
-					} else if (meter.Condition == null) {
-						console.log('null: ', meter.length)
-					};
-
-					if (conditionMarker._latlng == null) {
-						console.log(conditionMarker._latlng);
-					};
-
-
 					if (!routeLayers[meter.GPS.Route]) {
 						routeLayers[meter.GPS.Route] = L.layerGroup();
-					}
+						// console.log(routeLayers[meter.GPS.Route])
+					};
+
+					if (marker._latlng !== null) {
+					marker.addTo(routeLayers[meter.GPS.Route]);
+					// console.log(marker)
+					};
+
+
+					const conditionIcon = L.icon.pulse({
+						color: ConditionColor(meterCondition),
+						fillColor: ConditionColor(meterCondition),
+						iconSize: [11, 11],
+						animate: true
+					})
+
+					const conditionMarker = L.marker([meter.GPS.Latitude, meter.GPS.Longitude], { icon: conditionIcon })
+					.bindTooltip(meter.Address, tooltipOptions)
+					.openTooltip();
+
+					// console.log(conditionMarker)
+
+
+					if (!nullLayer._latlng == null) {
+						nullLayer[conditionMarker._latlng] = L.layerGroup();
+						// console.log(conditionMarker._latlng);
+					};
 
 					if (!conditionLayers[meter.Condition]) {
 						conditionLayers[meter.Condition] = L.layerGroup();
 					}
+					
 
-					marker.addTo(routeLayers[meter.GPS.Route]);
+					if (conditionMarker.Condition !== null || conditionMarker._latlng !== null) {
 					conditionMarker.addTo(conditionLayers[meter.Condition]);
+					} else {conditionMarker.addTo(nullLayer)};
 				});
 
-				var values = conditionLayers;
-				console.log('condition layers: ', values);
+
 
 				var searchLayer = L.layerGroup(routeLayers).addTo(map);
 				//... adding data in searchLayer ...
@@ -265,7 +265,7 @@
 							children: [
 								{
 									label: 'Silver Creek',
-									selectAllCheckbox: true,
+									selectAllCheckbox: false,
 									collapsed: true,
 									children: [
 										{ label: 'Route 10', layer: routeLayers[10] },
@@ -290,7 +290,7 @@
 								},
 								{
 									label: 'Lindale',
-									selectAllCheckbox: true,
+									selectAllCheckbox: false,
 									collapsed: true,
 									children: [
 										{ label: 'Route 21', layer: routeLayers[21] },
@@ -303,7 +303,7 @@
 								},
 								{
 									label: 'Kingston',
-									selectAllCheckbox: true,
+									selectAllCheckbox: false,
 									collapsed: true,
 									children: [
 										{ label: 'Route 42', layer: routeLayers[42] },
@@ -317,7 +317,7 @@
 								},
 								{
 									label: 'Shannon',
-									selectAllCheckbox: true,
+									selectAllCheckbox: false,
 									collapsed: true,
 									children: [
 										{ label: 'Route 50', layer: routeLayers[50] },
@@ -330,7 +330,7 @@
 								},
 								{
 									label: 'Armuchee',
-									selectAllCheckbox: true,
+									selectAllCheckbox: false,
 									collapsed: true,
 									children: [
 										{ label: 'Route 68', layer: routeLayers[68] },
@@ -348,7 +348,7 @@
 								},
 								{
 									label: 'Coosa',
-									selectAllCheckbox: true,
+									selectAllCheckbox: false,
 									collapsed: true,
 									children: [
 										{ label: 'Route 80', layer: routeLayers[80] },
