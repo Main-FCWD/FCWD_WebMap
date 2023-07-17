@@ -136,37 +136,37 @@
 			}
 
 			// Tooltip Label Creation //
-			var tooltipThreshold = 18;
-			var lastZoom;
-			map.on('zoomend', function () {
-				var zoom = map.getZoom();
-				if (zoom < tooltipThreshold && (!lastZoom || lastZoom >= tooltipThreshold)) {
-					map.eachLayer(function (l) {
-						if (l.getTooltip()) {
-							var tooltip = l.getTooltip();
-							l.unbindTooltip().bindTooltip(tooltip, {
-								permanent: false
-							});
-						}
-					});
-				} else if (zoom >= tooltipThreshold && (!lastZoom || lastZoom < tooltipThreshold)) {
-					map.eachLayer(function (l) {
-						if (l.getTooltip()) {
-							var tooltip = l.getTooltip();
-							l.unbindTooltip().bindTooltip(tooltip, {
-								permanent: true
-							});
-						}
-					});
-				}
-				lastZoom = zoom;
-			});
+			// var tooltipThreshold = 18;
+			// var lastZoom;
+			// map.on('zoomend', function () {
+			// 	var zoom = map.getZoom();
+			// 	if (zoom < tooltipThreshold && (!lastZoom || lastZoom >= tooltipThreshold)) {
+			// 		map.eachLayer(function (l) {
+			// 			if (l.getTooltip()) {
+			// 				var tooltip = l.getTooltip();
+			// 				l.unbindTooltip().bindTooltip(tooltip, {
+			// 					permanent: false
+			// 				});
+			// 			}
+			// 		});
+			// 	} else if (zoom >= tooltipThreshold && (!lastZoom || lastZoom < tooltipThreshold)) {
+			// 		map.eachLayer(function (l) {
+			// 			if (l.getTooltip()) {
+			// 				var tooltip = l.getTooltip();
+			// 				l.unbindTooltip().bindTooltip(tooltip, {
+			// 					permanent: true
+			// 				});
+			// 			}
+			// 		});
+			// 	}
+			// 	lastZoom = zoom;
+			// });
 
-			var tooltipOptions = {
-				direction: 'auto',
-				permanent: lastZoom,
-				offset: [10, 0]
-			};
+			// var tooltipOptions = {
+			// 	direction: 'auto',
+			// 	permanent: lastZoom,
+			// 	offset: [10, 0]
+			// };
 
 			async function addMarkersToMap(map, meters) {
 				var routeLayers = {};
@@ -178,9 +178,6 @@
 						return 'DarkRed';
 					}
 					if (meterCondition == 'Manual Read') {
-						return 'GoldenRod';
-					}
-					if (meterCondition == 'Error Code') {
 						return 'Orange';
 					}
 					if (meterCondition == 'Crew Needed') {
@@ -194,7 +191,7 @@
 
 					var tooltip = L.tooltip([meter.GPS.Latitude, meter.GPS.Longitude], {
 						content: meter.GPS.Address,
-						permanent: lastZoom,
+						permanent: false,
 						direction: 'auto',
 						offset: [10, 0]
 					});
@@ -223,11 +220,13 @@
 					const conditionIcon = L.icon.pulse({
 						color: ConditionColor(meterCondition),
 						fillColor: ConditionColor(meterCondition),
-						iconSize: [11, 11],
+						iconSize: [9, 9],
 						animate: true
 					});
 
-					const conditionMarker = L.marker([meter.GPS.Latitude, meter.GPS.Longitude], {icon: conditionIcon})
+					const conditionMarker = L.marker([meter.GPS.Latitude, meter.GPS.Longitude], {
+						icon: conditionIcon
+					})
 						.bindTooltip(tooltip)
 						.openTooltip();
 
@@ -247,6 +246,40 @@
 					} else {
 						conditionMarker.addTo(nullLayer);
 					}
+
+					var popupContent = `
+					<table>
+  <thead>
+    <tr>
+      <th colspan="2" style="padding-bottom:1em">${meter.GPS.Address}</th>
+    </tr>
+  </thead>
+  <tbody>
+	<tr>
+		<td style="text-align: right">Route: </td>
+		<td>${meter.GPS.Route}</td>
+    <tr>
+      <td style="text-align: right">Account #: </td>
+      <td>${meter.ACCOUNT_NO}</td>
+    </tr>
+    <tr>
+
+      <td style="padding-bottom: 1em; text-align: right">CID #: </td>
+      <td style="padding-bottom: 1em">${meter.CID_NO}</td>
+    </tr>
+    <tr>
+      <td style="padding-bottom: 1em; text-align: right">Meter #: </td>
+      <td style="padding-bottom: 1em">${meter.Meter_no}</td>
+    </tr>
+    <tr>
+      <td style="text-align: right">Condition: </td>
+      <td>${meter.Condition}</td>
+    </tr>
+  </tbody>
+</table>
+					`;
+
+					marker.bindPopup(popupContent)
 				});
 
 				var searchLayer = L.layerGroup(routeLayers).addTo(map);
@@ -371,7 +404,6 @@
 							collapsed: false,
 							children: [
 								{ label: 'Dead Head', layer: conditionLayers['Dead Head'] },
-								{ label: 'Error Code', layer: conditionLayers['Error Code'] },
 								{ label: 'Manual Read', layer: conditionLayers['Manual Read'] },
 								{ label: 'Crew', layer: conditionLayers['Crew Needed'] }
 							]
