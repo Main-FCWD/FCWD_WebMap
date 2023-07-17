@@ -279,7 +279,7 @@
 </table>
 					`;
 
-					marker.bindPopup(popupContent)
+					marker.bindPopup(popupContent);
 				});
 
 				var searchLayer = L.layerGroup(routeLayers).addTo(map);
