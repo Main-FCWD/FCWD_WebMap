@@ -31,7 +31,7 @@
 
 			console.log('Initial Bounds: ', map.getBounds());
 
-			map.setMaxBounds(map.getBounds());
+			map.setMaxBounds({_northeast:{lat:34.6134313663591, lng: -84.58854675292969}, _southwest:{lat:34.04583232505719, lng:-85.90690612792969}});
 
 			L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
 
