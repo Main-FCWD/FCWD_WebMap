@@ -31,7 +31,7 @@ jobs:
 
       - name: build
         run: |
-          npm run gh-pages
+          npm run build
 
 
       - name: Upload Artifacts
