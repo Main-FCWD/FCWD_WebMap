@@ -31,7 +31,12 @@
 
 			console.log('Initial Bounds: ', map.getBounds());
 
-			map.setMaxBounds({_northeast:{lat:34.6134313663591, lng: -84.58854675292969}, _southwest:{lat:34.04583232505719, lng:-85.90690612792969}});
+			var necorner = L.latLng(34.6134313663591, -84.58854675292969);
+			var swcorner = L.latLng(34.04583232505719, -85.90690612792969);
+
+			var bounds = L.latLngBounds(necorner, swcorner);
+
+			map.setMaxBounds(bounds);
 
 			L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
 
