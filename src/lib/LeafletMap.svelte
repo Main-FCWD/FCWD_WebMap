@@ -418,7 +418,7 @@
 					'body > div > main > section > div > div.leaflet-control-container > div.leaflet-top.leaflet-right > div > section'
 				);
 
-				var CollapseBtn = `<div><img class="layerControlToggle" style="float:right;" src="build/Data/images"></div>`;
+				var CollapseBtn = `<div><img class="layerControlToggle" style="float:right;" src="build/Data/images/lct_button.png"></div>`;
 
 				LayerControlContainer.insertAdjacentHTML('afterbegin', CollapseBtn);
 
