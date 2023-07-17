@@ -30,7 +30,11 @@
 			);
 			console.log('Initial Bounds: ', map.getBounds());
 
-			map.setMaxBounds(map.getBounds());
+			var neCorner = L.latLng(34.606649751725925, -84.60021972656251),
+			swCorner = L.latLng(34.05322832125499, -85.8959197998047),
+			bounds = L.latLngBounds(neCorner, swCorner);
+
+			map.setMaxBounds(bounds);
 
 			L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
 
