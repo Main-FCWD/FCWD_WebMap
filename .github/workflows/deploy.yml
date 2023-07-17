@@ -11,6 +11,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
         with: 
+          ref: pages
           ssh-key: secrets.SSH_KEY
 
       - name: Authorship
