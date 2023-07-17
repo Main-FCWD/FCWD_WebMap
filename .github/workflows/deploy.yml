@@ -11,6 +11,13 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
+      - name: Authorship
+        id: user_email
+        run: |
+          git config --global user.name "Test"
+          git config --global user.email "test@company.com"
+
+
       - name: Install Node.js
         uses: actions/setup-node@v3
         with:
@@ -22,8 +29,8 @@ jobs:
 
       - name: build
         run: |
-          git config --global user.email ${{ github.event.pusher.email }}"
-          git config --global user.name ${{ github.event.pusher.name }}"
+          echo "The name of the pusher: ${{ github.event.pusher.name }}"
+          echo "The email of the pusher: ${{ github.event.pusher.email }}"
           npm run gh-pages
           touch build/.nojekyll
 
