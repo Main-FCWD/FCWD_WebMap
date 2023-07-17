@@ -14,7 +14,7 @@ jobs:
       - name: Authorship
         id: user_email
         run: |
-          git config --global user.name "Stahlenstein"
+          git config --global user.name "stahlenstein"
           git config --global user.email "stahlstradamus@gmail.com"
 
 
