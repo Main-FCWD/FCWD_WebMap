@@ -28,7 +28,6 @@
 				[34.330395361608595, -85.2480697631836],
 				11
 			);
-
 			console.log('Initial Bounds: ', map.getBounds());
 
 			map.setMaxBounds(map.getBounds());
