@@ -21,9 +21,8 @@
 			await import('leaflet.control.layers.tree');
 			await import('leaflet.control.layers.tree/L.Control.Layers.Tree.css');
 			await import('leaflet-search');
-			await import('@ansur/leaflet-pulse-icon/dist/L.Icon.Pulse.js')
-			await import('@ansur/leaflet-pulse-icon/dist/L.Icon.Pulse.css')
-
+			await import('@ansur/leaflet-pulse-icon/dist/L.Icon.Pulse.js');
+			await import('@ansur/leaflet-pulse-icon/dist/L.Icon.Pulse.css');
 
 			map = L.map(mapElement, { zoomControl: true, maxZoom: 18, minZoom: 11 }).setView(
 				[34.330395361608595, -85.2480697631836],
@@ -126,7 +125,7 @@
 					`);
 
 				if (meterData) {
-					// console.log(meterData)
+					console.log(meterData);
 				}
 
 				if (metersError) {
@@ -165,7 +164,7 @@
 
 			var tooltipOptions = {
 				direction: 'auto',
-				permaent: lastZoom,
+				permanent: lastZoom,
 				offset: [10, 0]
 			};
 
@@ -185,15 +184,20 @@
 						return 'Orange';
 					}
 					if (meterCondition == 'Crew Needed') {
-						 return 'Black';
+						return 'Black';
 					}
-
 				}
-	
 
 				meters.forEach((meter) => {
 					var GPSRoute = meter.GPS.Route;
-					var meterCondition = ([meter.Condition,]);
+					var meterCondition = [meter.Condition];
+
+					var tooltip = L.tooltip([meter.GPS.Latitude, meter.GPS.Longitude], {
+						content: meter.GPS.Address,
+						permanent: lastZoom,
+						direction: 'auto',
+						offset: [10, 0]
+					});
 
 					const markerIcon = L.icon({
 						iconUrl: `https://raw.githubusercontent.com/Main-FCWD/FloydWebMap/main/static/Data/markers/rt${GPSRoute}.svg`,
@@ -201,50 +205,49 @@
 					});
 
 					const marker = L.marker([meter.GPS.Latitude, meter.GPS.Longitude], { icon: markerIcon })
-						.bindTooltip(meter.Address, tooltipOptions)
+						.bindTooltip(tooltip)
 						.openTooltip();
 
 					if (!routeLayers[meter.GPS.Route]) {
 						routeLayers[meter.GPS.Route] = L.layerGroup();
 						// console.log(routeLayers[meter.GPS.Route])
-					};
+					}
 
 					if (marker._latlng !== null) {
-					marker.addTo(routeLayers[meter.GPS.Route]);
-					// console.log(marker)
-					};
+						marker.addTo(routeLayers[meter.GPS.Route]);
+						// console.log(marker)
+					}
 
+					// console.log("meter example: ", meter.GPS.Address)
 
 					const conditionIcon = L.icon.pulse({
 						color: ConditionColor(meterCondition),
 						fillColor: ConditionColor(meterCondition),
 						iconSize: [11, 11],
 						animate: true
-					})
+					});
 
-					const conditionMarker = L.marker([meter.GPS.Latitude, meter.GPS.Longitude], { icon: conditionIcon })
-					.bindTooltip(meter.Address, tooltipOptions)
-					.openTooltip();
+					const conditionMarker = L.marker([meter.GPS.Latitude, meter.GPS.Longitude], {icon: conditionIcon})
+						.bindTooltip(tooltip)
+						.openTooltip();
 
 					// console.log(conditionMarker)
-
 
 					if (!nullLayer._latlng == null) {
 						nullLayer[conditionMarker._latlng] = L.layerGroup();
 						// console.log(conditionMarker._latlng);
-					};
+					}
 
 					if (!conditionLayers[meter.Condition]) {
 						conditionLayers[meter.Condition] = L.layerGroup();
 					}
-					
 
 					if (conditionMarker.Condition !== null || conditionMarker._latlng !== null) {
-					conditionMarker.addTo(conditionLayers[meter.Condition]);
-					} else {conditionMarker.addTo(nullLayer)};
+						conditionMarker.addTo(conditionLayers[meter.Condition]);
+					} else {
+						conditionMarker.addTo(nullLayer);
+					}
 				});
-
-
 
 				var searchLayer = L.layerGroup(routeLayers).addTo(map);
 				//... adding data in searchLayer ...
