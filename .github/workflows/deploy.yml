@@ -13,13 +13,6 @@ jobs:
         with: 
           ref: pages
 
-      - name: Authorship
-        id: user_email
-        run: |
-          git config --global user.name "stahlenstein"
-          git config --global user.email "stahlstradamus@gmail.com"
-
-
       - name: Install Node.js
         uses: actions/setup-node@v3
         with:
@@ -30,15 +23,18 @@ jobs:
         run: npm install
 
       - name: build
+        env: 
+          BASE_PATH: '/FCWD_WebMap'
         run: |
           npm run build
+          touch build/.nojekyll
 
 
       - name: Upload Artifacts
         uses: actions/upload-pages-artifact@v1
         with:
           # this should match the `pages` option in your adapter-static options
-          path: 'build'
+          path: 'build/'
 
   deploy:
     needs: build_site
