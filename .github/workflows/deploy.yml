@@ -22,8 +22,8 @@ jobs:
 
       - name: build
         run: |
-          git config --global user.email ${{ github.event.pusher.name }}"
-          git config --global user.name ${{ github.event.pusher.email }}"
+          git config --global user.email ${{ github.event.pusher.email }}"
+          git config --global user.name ${{ github.event.pusher.name }}"
           npm run gh-pages
           touch build/.nojekyll
 
