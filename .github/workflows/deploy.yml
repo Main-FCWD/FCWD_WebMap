@@ -3,6 +3,10 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches: "pages"
+
+permissions:
+  pages: write
+  id-token: write
     
 concurrency:
   group: "pages"
@@ -14,10 +18,7 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-        with:
-          ref: pages
           
-
       - name: Install Node.js
         uses: actions/setup-node@v3
         with:
@@ -26,28 +27,23 @@ jobs:
 
       - name: Install dependencies
         run: npm install
-
-      - name: build
-        env: 
-          BASE_PATH: '/FCWD_WebMap/index.html'
-        run: |
-          npm run build
-          touch build/.nojekyll
-
-
-      - name: Upload Artifacts
+      
+      - name: Setup Pages
+        uses: actions/configure-pages@v3
+        with:
+          static_site_generator: "sveltekit"
+        
+      - name: Build site
+        run: pnpm run build
+          
+      - name: Upload artifact
         uses: actions/upload-pages-artifact@v1
         with:
-          # this should match the `pages` option in your adapter-static options
-          path: '/index.html'
+          path: 'build/'
 
   deploy:
     needs: build_site
     runs-on: ubuntu-latest
-
-    permissions:
-      pages: write
-      id-token: write
 
     environment:
       name: github-pages
@@ -56,4 +52,4 @@ jobs:
     steps:
       - name: Deploy
         id: deployment
-        uses: actions/deploy-pages@v1
+        uses: actions/deploy-pages@v2
