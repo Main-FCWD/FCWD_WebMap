@@ -9,7 +9,7 @@ export default {
             pages: 'build',
             assets: 'build',
             paths: {
-                base: 'build'
+                base: 'build/index.html'
             },
             fallback: './index.html',
             precompress: false,
