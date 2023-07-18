@@ -34,8 +34,8 @@ jobs:
           # Upload entire repository
           path: |
             build
-            !build/*.md
-            
+            !README.md
+
   deploy:
    needs: build
    runs-on: ubuntu-latest
