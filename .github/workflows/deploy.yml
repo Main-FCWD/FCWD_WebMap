@@ -39,7 +39,7 @@ jobs:
         uses: actions/upload-pages-artifact@v1
         with:
           # this should match the `pages` option in your adapter-static options
-          path: 'build/index.html'
+          path: '/index.html'
 
   deploy:
     needs: build_site
