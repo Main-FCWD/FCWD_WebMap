@@ -2,7 +2,11 @@ name: Deploy to GitHub Pages
 
 on:
   push:
-    branches: 'pages'
+    branches: "pages"
+    
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
 
 jobs:
   build_site:
@@ -25,7 +29,7 @@ jobs:
 
       - name: build
         env: 
-          BASE_PATH: '/FCWD_WebMap'
+          BASE_PATH: '/FCWD_WebMap/index.html'
         run: |
           npm run build
           touch build/.nojekyll
@@ -35,7 +39,7 @@ jobs:
         uses: actions/upload-pages-artifact@v1
         with:
           # this should match the `pages` option in your adapter-static options
-          path: 'build'
+          path: '/FCWD_WebMap/index.html'
 
   deploy:
     needs: build_site
