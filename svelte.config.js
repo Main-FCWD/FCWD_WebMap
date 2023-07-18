@@ -9,7 +9,7 @@ export default {
             pages: 'build',
             assets: 'build',
             paths: {
-                base: 'build/index.html'
+                base: process.env.NODE_ENV === '/FCWD_WebMap'
             },
             fallback: './index.html',
             precompress: false,
