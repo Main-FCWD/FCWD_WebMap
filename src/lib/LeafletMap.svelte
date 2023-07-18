@@ -11,7 +11,6 @@
 
 	// console.log(supabase);
 
-
 	let map;
 
 	onMount(async () => {
@@ -24,23 +23,59 @@
 			await import('@ansur/leaflet-pulse-icon/dist/L.Icon.Pulse.js');
 			await import('@ansur/leaflet-pulse-icon/dist/L.Icon.Pulse.css');
 
-			map = L.map(map, { zoomControl: true, maxZoom: 18, minZoom: 11 }).setView(
-				[34.330395361608595, -85.2480697631836],
-				11
-			);
-			console.log('Initial Bounds: ', map.getBounds());
+			map = L.map(map, { zoomControl: true, maxZoom: 18, minZoom: 10 }).setView(
+					[34.330395361608595, -85.2480697631836],
+					0
+				);
 
-			
-			var neCorner = L.latLng(34.978092874, -84.6065642812),
-			swCorner = L.latLng(33.6857261568, -85.8973345757),
-			bounds = L.latLngBounds(neCorner, swCorner);
+			// Create a function to set different maxBounds for different devices
+			function setMaxBoundsForDevice(map) {
+				console.log('2');
+				// Get the screen width
+				const screenWidth = window.innerWidth;
 
-			map.setMaxBounds(bounds);
+				// Set different maxBounds based on the screen width (you can adjust the values)
+				if (screenWidth < 900) {
+					// Mobile or small screen devices
+					map.setMaxBounds([
+						[33.810772, -85.775532],
+						[34.765142, -84.741472]
+					]);
+					map.setView([34.330395361608595, -85.2480697631836], 10);
+					console.log('little screen');
+				} else {
+					// Desktop or larger screen devices
+					map.setMaxBounds([
+						[34.978092874, -84.6065642812],
+						[33.6857261568, -85.8973345757]
+					]);
+					map.setView([34.330395361608595, -85.2480697631836], 11);
+					console.log('big screen');
+				}
+			}
 
-			L.control.attribution({
-				prefix: '<span>v 0.0.2</span>',
-				position: 'bottomleft'
-			}).addTo(map)
+			setMaxBoundsForDevice(map);
+			console.log('1');
+
+			// map = L.map(map, { zoomControl: true, maxZoom: 18, minZoom: 11 }).setView(
+			// 	[34.330395361608595, -85.2480697631836],
+			// 	11
+			// );
+			// console.log('Initial Bounds: ', map.getBounds());
+			// console.log('View Port: ', window.innerWidth);
+
+			// var neCorner = L.latLng(34.978092874, -84.6065642812),
+			// 	swCorner = L.latLng(33.6857261568, -85.8973345757),
+			// 	bounds = L.latLngBounds(neCorner, swCorner);
+
+			// map.setMaxBounds(bounds);
+
+			L.control
+				.attribution({
+					prefix: '<span>v 0.0.3</span>',
+					position: 'bottomleft'
+				})
+				.addTo(map);
 
 			L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
 
