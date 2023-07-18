@@ -38,7 +38,7 @@
 			map.setMaxBounds(bounds);
 
 			L.control.attribution({
-				prefix: '<span>v 0.0.1</span>',
+				prefix: '<span>v 0.0.2</span>',
 				position: 'bottomleft'
 			}).addTo(map)
 
