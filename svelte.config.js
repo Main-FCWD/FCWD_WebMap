@@ -9,9 +9,9 @@ export default {
             pages: 'build',
             assets: 'build',
             paths: {
-                base: '/FCWD_WebMap/index.html'
+                base: './'
             },
-            fallback: 'index.html',
+            fallback: './index.html',
             precompress: false,
             strict: true
         })
