@@ -9,7 +9,7 @@ export default {
             pages: 'build',
             assets: 'build',
             paths: {
-                base: 'https://main-fcwd.github.io/FCWD_WebMap/'
+                base: '/FCWD_WebMap/index.html'
             },
             fallback: 'index.html',
             precompress: false,
