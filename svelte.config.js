@@ -8,7 +8,10 @@ export default {
             // these options are set automatically — see below
             pages: 'build',
             assets: 'build',
-            fallback: undefined,
+            paths: {
+                base: 'https://main-fcwd.github.io/FCWD_WebMap/'
+            },
+            fallback: 'index.html',
             precompress: false,
             strict: true
         })
