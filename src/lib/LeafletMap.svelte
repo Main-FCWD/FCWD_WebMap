@@ -11,7 +11,7 @@
 
 	// console.log(supabase);
 
-	let mapElement;
+
 	let map;
 
 	onMount(async () => {
@@ -24,17 +24,22 @@
 			await import('@ansur/leaflet-pulse-icon/dist/L.Icon.Pulse.js');
 			await import('@ansur/leaflet-pulse-icon/dist/L.Icon.Pulse.css');
 
-			map = L.map(mapElement, { zoomControl: true, maxZoom: 18, minZoom: 11 }).setView(
+			map = L.map(map, { zoomControl: true, maxZoom: 18, minZoom: 11 }).setView(
 				[34.330395361608595, -85.2480697631836],
 				11
 			);
 			console.log('Initial Bounds: ', map.getBounds());
 
-			var neCorner = L.latLng(34.606649751725925, -84.60021972656251),
-			swCorner = L.latLng(34.05322832125499, -85.8959197998047),
+			var neCorner = L.latLng(34.978092874, -84.6065642812),
+			swCorner = L.latLng(33.6857261568, -85.8973345757),
 			bounds = L.latLngBounds(neCorner, swCorner);
 
 			map.setMaxBounds(bounds);
+
+			L.control.attribution({
+				prefix: '<span>v 0.0.1</span>',
+				position: 'bottomleft'
+			}).addTo(map)
 
 			L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
 
@@ -480,7 +485,7 @@
 </script>
 
 <section>
-	<div bind:this={mapElement} />
+	<div bind:this={map} />
 	<div class="header-bg">
 		<span>Floyd County Water Department</span>
 	</div>
