@@ -30,6 +30,7 @@
 			);
 			console.log('Initial Bounds: ', map.getBounds());
 
+			
 			var neCorner = L.latLng(34.978092874, -84.6065642812),
 			swCorner = L.latLng(33.6857261568, -85.8973345757),
 			bounds = L.latLngBounds(neCorner, swCorner);
