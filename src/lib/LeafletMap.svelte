@@ -183,6 +183,7 @@
 				var routeLayers = {};
 				var conditionLayers = {};
 				var nullLayer = {};
+				var allmeters = L.featureGroup()
 
 				function ConditionColor(meterCondition) {
 					if (meterCondition == 'Dead Head') {
@@ -212,9 +213,16 @@
 						iconSize: [25, 25] // Adjust the size according to your marker images
 					});
 
-					const marker = L.marker([meter.GPS.Latitude, meter.GPS.Longitude], { icon: markerIcon })
+					const marker = L.marker([meter.GPS.Latitude, meter.GPS.Longitude], {
+						properties: {
+							Address: meter.GPS.Address,
+							Route: meter.GPS.Route
+						},
+						icon: markerIcon })
 						.bindTooltip(tooltip)
 						.openTooltip();
+
+						marker.addTo(allmeters);
 
 					if (!routeLayers[meter.GPS.Route]) {
 						routeLayers[meter.GPS.Route] = L.layerGroup();
@@ -262,6 +270,8 @@
 
 					marker.bindPopup(popupContent);
 				});
+
+				console.log('All Meters: ', allmeters);
 
 				var searchLayer = L.layerGroup(routeLayers).addTo(map);
 				//... adding data in searchLayer ...
