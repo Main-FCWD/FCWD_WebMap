@@ -24,13 +24,13 @@
 			await import('@ansur/leaflet-pulse-icon/dist/L.Icon.Pulse.css');
 
 			map = L.map(map, { zoomControl: true, maxZoom: 18, minZoom: 10 }).setView(
-					[34.330395361608595, -85.2480697631836],
-					0
-				);
+				[34.330395361608595, -85.2480697631836],
+				0
+			);
 
 			// Create a function to set different maxBounds for different devices
 			function setMaxBoundsForDevice(map) {
-				console.log('2');
+				
 				// Get the screen width
 				const screenWidth = window.innerWidth;
 
@@ -50,25 +50,10 @@
 						[33.6857261568, -85.8973345757]
 					]);
 					map.setView([34.330395361608595, -85.2480697631836], 11);
-					console.log('big screen');
 				}
 			}
 
 			setMaxBoundsForDevice(map);
-			console.log('1');
-
-			// map = L.map(map, { zoomControl: true, maxZoom: 18, minZoom: 11 }).setView(
-			// 	[34.330395361608595, -85.2480697631836],
-			// 	11
-			// );
-			// console.log('Initial Bounds: ', map.getBounds());
-			// console.log('View Port: ', window.innerWidth);
-
-			// var neCorner = L.latLng(34.978092874, -84.6065642812),
-			// 	swCorner = L.latLng(33.6857261568, -85.8973345757),
-			// 	bounds = L.latLngBounds(neCorner, swCorner);
-
-			// map.setMaxBounds(bounds);
 
 			L.control
 				.attribution({
@@ -169,7 +154,7 @@
 					`);
 
 				if (meterData) {
-					console.log(meterData);
+					// console.log(meterData);
 				}
 
 				if (metersError) {
@@ -179,11 +164,11 @@
 				return meterData;
 			}
 
-			async function addMarkersToMap(map, meters) {
+			async function addMarkersToMap(map, meterGeoJSON) {
+				// console.log('meters in function: ', meterGeoJSON);
+
 				var routeLayers = {};
 				var conditionLayers = {};
-				var nullLayer = {};
-				var allmeters = L.featureGroup()
 
 				function ConditionColor(meterCondition) {
 					if (meterCondition == 'Dead Head') {
@@ -197,12 +182,15 @@
 					}
 				}
 
-				meters.forEach((meter) => {
-					var GPSRoute = meter.GPS.Route;
-					var meterCondition = [meter.Condition];
+				var i, features;
+				for (i = 0; i < meterGeoJSON.features.length; i++) {
+					features = meterGeoJSON.features[i];
 
-					var tooltip = L.tooltip([meter.GPS.Latitude, meter.GPS.Longitude], {
-						content: meter.GPS.Address,
+					var GPSRoute = features.properties.Route;
+					var meterCondition = [features.properties.Condition];
+
+					var tooltip = L.tooltip(features.geometry.coordinates, {
+						content: features.properties.Address,
 						permanent: false,
 						direction: 'auto',
 						offset: [10, 0]
@@ -213,28 +201,23 @@
 						iconSize: [25, 25] // Adjust the size according to your marker images
 					});
 
-					const marker = L.marker([meter.GPS.Latitude, meter.GPS.Longitude], {
-						properties: {
-							Address: meter.GPS.Address,
-							Route: meter.GPS.Route
-						},
-						icon: markerIcon })
+					const marker = L.marker(features.geometry.coordinates, {
+						icon: markerIcon
+					})
 						.bindTooltip(tooltip)
 						.openTooltip();
 
-						marker.addTo(allmeters);
-
-					if (!routeLayers[meter.GPS.Route]) {
-						routeLayers[meter.GPS.Route] = L.layerGroup();
-						// console.log(routeLayers[meter.GPS.Route])
+					if (!routeLayers[features.properties.Route]) {
+						routeLayers[features.properties.Route] = L.layerGroup();
+						// console.log(routeLayers[features.properties.GPS.Route])
 					}
 
 					if (marker._latlng !== null) {
-						marker.addTo(routeLayers[meter.GPS.Route]);
+						marker.addTo(routeLayers[features.properties.Route]);
 						// console.log(marker)
 					}
 
-					// console.log("meter example: ", meter.GPS.Address)
+					// console.log("meter example: ", features.properties.GPS.Address)
 
 					const conditionIcon = L.icon.pulse({
 						color: ConditionColor(meterCondition),
@@ -243,7 +226,7 @@
 						animate: true
 					});
 
-					const conditionMarker = L.marker([meter.GPS.Latitude, meter.GPS.Longitude], {
+					const conditionMarker = L.marker(features.geometry.coordinates, {
 						icon: conditionIcon
 					})
 						.bindTooltip(tooltip)
@@ -251,27 +234,19 @@
 
 					// console.log(conditionMarker)
 
-					if (!nullLayer._latlng == null) {
-						nullLayer[conditionMarker._latlng] = L.layerGroup();
-						// console.log(conditionMarker._latlng);
+
+					if (!conditionLayers[features.properties.Condition]) {
+						conditionLayers[features.properties.Condition] = L.layerGroup();
 					}
 
-					if (!conditionLayers[meter.Condition]) {
-						conditionLayers[meter.Condition] = L.layerGroup();
-					}
+					conditionMarker.addTo(conditionLayers[features.properties.Condition]);
 
-					if (conditionMarker.Condition !== null || conditionMarker._latlng !== null) {
-						conditionMarker.addTo(conditionLayers[meter.Condition]);
-					} else {
-						conditionMarker.addTo(nullLayer);
-					}
 
-					var popupContent = `<table><thead><tr><th colspan="2" style="padding-bottom:1em">${meter.GPS.Address}</th></tr></thead><tbody><tr><td style="text-align: right">Route: </td><td>${meter.GPS.Route}</td><tr><td style="text-align: right">Account #: </td><td>${meter.ACCOUNT_NO}</td></tr><tr><td style="padding-bottom: 1em; text-align: right">CID #: </td><td style="padding-bottom: 1em">${meter.CID_NO}</td></tr><tr><td style="padding-bottom: 1em; text-align: right">Meter #: </td><td style="padding-bottom: 1em">${meter.Meter_no}</td></tr><tr><td style="text-align: right">Condition: </td><td>${meter.Condition}</td></tr></tbody></table>`;
+					var popupContent = `<table><thead><tr><th colspan="2" style="padding-bottom:1em">${features.properties.Address}</th></tr></thead><tbody><tr><td style="text-align: right">Route: </td><td>${features.properties.Route}</td><tr><td style="text-align: right">Account #: </td><td>${features.properties["Account #"]}</td></tr><tr><td style="padding-bottom: 1em; text-align: right">CID #: </td><td style="padding-bottom: 1em">${features.properties["CID #"]}</td></tr><tr><td style="padding-bottom: 1em; text-align: right">Meter #: </td><td style="padding-bottom: 1em">${features.properties["Meter #"]}</td></tr><tr><td style="text-align: right">Condition: </td><td>${features.properties.Condition}</td></tr></tbody></table>`;
 
 					marker.bindPopup(popupContent);
-				});
+				};
 
-				console.log('All Meters: ', allmeters);
 
 				var searchLayer = L.layerGroup(routeLayers).addTo(map);
 				//... adding data in searchLayer ...
@@ -437,12 +412,55 @@
 					document.querySelector('body > div > main > section').removeChild(titleSpan);
 					console.log('Title Span Clicked!');
 				});
+
+				
+
+
+				// console.log("GeoJSON Data: ", geojson);
 			}
+
 
 			async function meterAdditionData() {
 				try {
 					const meters = await fetchData();
-					addMarkersToMap(map, meters);
+					// console.log('Meters: ', meters, typeof meters);
+
+					var meterGeoJSON = {};
+					meterGeoJSON['type'] = 'FeatureCollection';
+					meterGeoJSON['features'] = [];
+
+					var i;
+					for (i = 0; i < meters.length; i++) {
+
+						var newFeature = {
+							type: 'Feature',
+							geometry: {
+								type: 'Point',
+								coordinates: [meters[i].GPS.Latitude, meters[i].GPS.Longitude]
+							},
+							properties: {
+								Address: meters[i].GPS.Address,
+								Route: meters[i].GPS.Route,
+								'Account #': meters[i].ACCOUNT_NO,
+								'CID #': meters[i].CID_NO,
+								'Meter #': meters[i].Meter_no,
+								Service: meters[i].Service_Type,
+								Condition: meters[i].Condition,
+								'Last Read': meters[i].New_Date,
+								Count: meters[i].Count,
+								'Min Value': meters[i]["MIN VALUE"],
+								Average: meters[i].MEAN,
+								Median: meters[i].Median,
+								'Max Value': meters[i]["MAX VALUE"]
+							}
+					};
+
+						meterGeoJSON['features'].push(newFeature);
+					}
+					console.log('GeoJSON Data: ', meterGeoJSON);
+
+					addMarkersToMap(map, meterGeoJSON);
+
 				} catch (error) {
 					console.error('Error: ', error);
 				}
