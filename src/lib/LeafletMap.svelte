@@ -57,7 +57,7 @@
 
 			L.control
 				.attribution({
-					prefix: '<span>v 0.0.3</span>',
+					prefix: '<span>v 0.0.4</span>',
 					position: 'bottomleft'
 				})
 				.addTo(map);
