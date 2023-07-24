@@ -19,18 +19,19 @@
 			await import('leaflet.locatecontrol');
 			await import('leaflet.control.layers.tree');
 			await import('leaflet.control.layers.tree/L.Control.Layers.Tree.css');
-			await import('leaflet-search');
+			await import('leaflet-search/dist/leaflet-search.min.js');
+			await import('leaflet-search/dist/leaflet-search.min.css');
 			await import('@ansur/leaflet-pulse-icon/dist/L.Icon.Pulse.js');
 			await import('@ansur/leaflet-pulse-icon/dist/L.Icon.Pulse.css');
 
+			// initailizing map //
 			map = L.map(map, { zoomControl: true, maxZoom: 18, minZoom: 10 }).setView(
 				[34.330395361608595, -85.2480697631836],
 				0
 			);
 
-			// Create a function to set different maxBounds for different devices
+			// Create a function to set different maxBounds for different devices //
 			function setMaxBoundsForDevice(map) {
-				
 				// Get the screen width
 				const screenWidth = window.innerWidth;
 
@@ -52,12 +53,13 @@
 					map.setView([34.330395361608595, -85.2480697631836], 11);
 				}
 			}
-
+			// calling max boundaries //
 			setMaxBoundsForDevice(map);
 
+			// Attribution creation //
 			L.control
 				.attribution({
-					prefix: '<span>v 0.0.4</span>',
+					prefix: '<span>v 0.0.5</span>',
 					position: 'bottomleft'
 				})
 				.addTo(map);
@@ -77,6 +79,7 @@
 				maxNativeZoom: 18
 			});
 
+			// Dark Map Layer Creation // 
 			map.createPane('pane_OSM_dark');
 			var layer_OSM_dark = L.tileLayer(
 				'https://server.arcgisonline.com/arcgis/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}',
@@ -104,6 +107,7 @@
 			});
 			layer_GoogleSat;
 
+			// Base Layers Added to Base Layers //
 			var baseTree = {
 				label: 'Base Maps',
 				children: [
@@ -122,6 +126,7 @@
 				collapsed: false
 			};
 
+			// Addition of Floyd County Border Outline //
 			map.createPane('pane_FloydBorder');
 			// Load and display your JSON file using Leaflet.js
 			fetch(
@@ -164,8 +169,8 @@
 				return meterData;
 			}
 
+			// Addition of ALL Markers Upon Promise //
 			async function addMarkersToMap(map, meterGeoJSON) {
-				// console.log('meters in function: ', meterGeoJSON);
 
 				var routeLayers = {};
 				var conditionLayers = {};
@@ -182,6 +187,7 @@
 					}
 				}
 
+				// Iterating Over Each Meter in Database to a Marker //
 				var i, features;
 				for (i = 0; i < meterGeoJSON.features.length; i++) {
 					features = meterGeoJSON.features[i];
@@ -205,19 +211,18 @@
 						icon: markerIcon
 					})
 						.bindTooltip(tooltip)
-						.openTooltip();
+						.openTooltip()
+						
 
 					if (!routeLayers[features.properties.Route]) {
 						routeLayers[features.properties.Route] = L.layerGroup();
-						// console.log(routeLayers[features.properties.GPS.Route])
+						
 					}
 
 					if (marker._latlng !== null) {
 						marker.addTo(routeLayers[features.properties.Route]);
-						// console.log(marker)
+						
 					}
-
-					// console.log("meter example: ", features.properties.GPS.Address)
 
 					const conditionIcon = L.icon.pulse({
 						color: ConditionColor(meterCondition),
@@ -232,8 +237,6 @@
 						.bindTooltip(tooltip)
 						.openTooltip();
 
-					// console.log(conditionMarker)
-
 
 					if (!conditionLayers[features.properties.Condition]) {
 						conditionLayers[features.properties.Condition] = L.layerGroup();
@@ -241,23 +244,25 @@
 
 					conditionMarker.addTo(conditionLayers[features.properties.Condition]);
 
-
-					var popupContent = `<table><thead><tr><th colspan="2" style="padding-bottom:1em">${features.properties.Address}</th></tr></thead><tbody><tr><td style="text-align: right">Route: </td><td>${features.properties.Route}</td><tr><td style="text-align: right">Account #: </td><td>${features.properties["Account #"]}</td></tr><tr><td style="padding-bottom: 1em; text-align: right">CID #: </td><td style="padding-bottom: 1em">${features.properties["CID #"]}</td></tr><tr><td style="padding-bottom: 1em; text-align: right">Meter #: </td><td style="padding-bottom: 1em">${features.properties["Meter #"]}</td></tr><tr><td style="text-align: right">Condition: </td><td>${features.properties.Condition}</td></tr></tbody></table>`;
+					var popupContent = `<table><thead><tr><th colspan="2" style="padding-bottom:1em">${features.properties.Address}</th></tr></thead><tbody><tr><td style="text-align: right">Route: </td><td>${features.properties.Route}</td><tr><td style="text-align: right">Account #: </td><td>${features.properties['Account #']}</td></tr><tr><td style="padding-bottom: 1em; text-align: right">CID #: </td><td style="padding-bottom: 1em">${features.properties['CID #']}</td></tr><tr><td style="padding-bottom: 1em; text-align: right">Meter #: </td><td style="padding-bottom: 1em">${features.properties['Meter #']}</td></tr><tr><td style="text-align: right">Condition: </td><td>${features.properties.Condition}</td></tr></tbody></table>`;
 
 					marker.bindPopup(popupContent);
-				};
+				}
+
+				// const searchLayer = L.geoJSON(meterGeoJSON).addTo(map);
 
 
-				var searchLayer = L.layerGroup(routeLayers).addTo(map);
-				//... adding data in searchLayer ...
-				map.addControl(
-					new L.Control.Search({
-						layer: searchLayer,
-						initial: false,
-						propertyName: name
-					})
-				);
-				//searchLayer is a L.LayerGroup contains searched markers
+				// const searchControl = new L.Control.Search({
+				// 	layer: searchLayer,
+				// 	propertyName: 'Address',
+				// 	moveToLocation: function(latlng, title, map) {
+						
+				// 		map.setView(latlng);
+				// 	},
+
+				// });
+
+				// map.addControl(searchControl);
 
 				var mapRoutes = {
 					label: 'Meters',
@@ -413,12 +418,8 @@
 					console.log('Title Span Clicked!');
 				});
 
-				
-
-
 				// console.log("GeoJSON Data: ", geojson);
 			}
-
 
 			async function meterAdditionData() {
 				try {
@@ -431,7 +432,6 @@
 
 					var i;
 					for (i = 0; i < meters.length; i++) {
-
 						var newFeature = {
 							type: 'Feature',
 							geometry: {
@@ -448,19 +448,18 @@
 								Condition: meters[i].Condition,
 								'Last Read': meters[i].New_Date,
 								Count: meters[i].Count,
-								'Min Value': meters[i]["MIN VALUE"],
+								'Min Value': meters[i]['MIN VALUE'],
 								Average: meters[i].MEAN,
 								Median: meters[i].Median,
-								'Max Value': meters[i]["MAX VALUE"]
+								'Max Value': meters[i]['MAX VALUE']
 							}
-					};
+						};
 
 						meterGeoJSON['features'].push(newFeature);
 					}
 					console.log('GeoJSON Data: ', meterGeoJSON);
 
 					addMarkersToMap(map, meterGeoJSON);
-
 				} catch (error) {
 					console.error('Error: ', error);
 				}
