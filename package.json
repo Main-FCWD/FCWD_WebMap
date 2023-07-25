@@ -35,6 +35,7 @@
 		"@supabase/supabase-js": "^2.26.0",
 		"leaflet-search": "^3.0.9",
 		"leaflet.control.layers.tree": "^1.1.0",
-		"leaflet.locatecontrol": "^0.79.0"
+		"leaflet.locatecontrol": "^0.79.0",
+		"leaflet.markercluster": "^1.5.3"
 	}
 }
