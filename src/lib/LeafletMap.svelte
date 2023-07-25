@@ -23,6 +23,8 @@
 			await import('leaflet-search/dist/leaflet-search.min.css');
 			await import('@ansur/leaflet-pulse-icon/dist/L.Icon.Pulse.js');
 			await import('@ansur/leaflet-pulse-icon/dist/L.Icon.Pulse.css');
+			await import('leaflet.markercluster/dist/leaflet.markercluster.js');
+			await import('leaflet.markercluster/dist/MarkerCluster.Default.css');
 
 			// initailizing map //
 			map = L.map(map, { zoomControl: true, maxZoom: 18, minZoom: 10 }).setView(
@@ -59,7 +61,7 @@
 			// Attribution creation //
 			L.control
 				.attribution({
-					prefix: '<span>v 0.0.5</span>',
+					prefix: '<span>v 0.0.6</span>',
 					position: 'bottomleft'
 				})
 				.addTo(map);
@@ -169,11 +171,14 @@
 				return meterData;
 			}
 
+
 			// Addition of ALL Markers Upon Promise //
 			async function addMarkersToMap(map, meterGeoJSON) {
 
 				var routeLayers = {};
 				var conditionLayers = {};
+				var markerCluster = new window.L.markerClusterGroup();
+				
 
 				function ConditionColor(meterCondition) {
 					if (meterCondition == 'Dead Head') {
@@ -209,14 +214,12 @@
 
 					const marker = L.marker(features.geometry.coordinates, {
 						icon: markerIcon
-					})
-						.bindTooltip(tooltip)
-						.openTooltip()
+					}).bindTooltip(tooltip).openTooltip()
 						
 
 					if (!routeLayers[features.properties.Route]) {
-						routeLayers[features.properties.Route] = L.layerGroup();
-						
+						routeLayers[features.properties.Route] = window.L.markerClusterGroup();
+
 					}
 
 					if (marker._latlng !== null) {
@@ -247,22 +250,13 @@
 					var popupContent = `<table><thead><tr><th colspan="2" style="padding-bottom:1em">${features.properties.Address}</th></tr></thead><tbody><tr><td style="text-align: right">Route: </td><td>${features.properties.Route}</td><tr><td style="text-align: right">Account #: </td><td>${features.properties['Account #']}</td></tr><tr><td style="padding-bottom: 1em; text-align: right">CID #: </td><td style="padding-bottom: 1em">${features.properties['CID #']}</td></tr><tr><td style="padding-bottom: 1em; text-align: right">Meter #: </td><td style="padding-bottom: 1em">${features.properties['Meter #']}</td></tr><tr><td style="text-align: right">Condition: </td><td>${features.properties.Condition}</td></tr></tbody></table>`;
 
 					marker.bindPopup(popupContent);
+
+					markerCluster.addLayer(marker);
 				}
 
-				// const searchLayer = L.geoJSON(meterGeoJSON).addTo(map);
 
+				// map.addLayer(markerCluster);
 
-				// const searchControl = new L.Control.Search({
-				// 	layer: searchLayer,
-				// 	propertyName: 'Address',
-				// 	moveToLocation: function(latlng, title, map) {
-						
-				// 		map.setView(latlng);
-				// 	},
-
-				// });
-
-				// map.addControl(searchControl);
 
 				var mapRoutes = {
 					label: 'Meters',
