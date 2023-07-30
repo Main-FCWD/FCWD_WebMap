@@ -25,6 +25,8 @@
 			await import('@ansur/leaflet-pulse-icon/dist/L.Icon.Pulse.css');
 			await import('leaflet.markercluster/dist/leaflet.markercluster.js');
 			await import('leaflet.markercluster/dist/MarkerCluster.Default.css');
+			await import('https://api.mapbox.com/mapbox.js/plugins/leaflet-fullscreen/v1.0.1/Leaflet.fullscreen.min.js')
+			await import('leaflet-fullscreen/dist/leaflet.fullscreen.css')
 
 			// initailizing map //
 			map = L.map(map, { zoomControl: true, maxZoom: 18, minZoom: 10 }).setView(
@@ -467,6 +469,8 @@
 					initialZoomLevel: 18
 				})
 				.addTo(map);
+
+			map.addControl(new L.Control.Fullscreen());
 		}
 	});
 

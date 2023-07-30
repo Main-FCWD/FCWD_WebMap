@@ -33,6 +33,7 @@
 	"dependencies": {
 		"@ansur/leaflet-pulse-icon": "^0.1.1",
 		"@supabase/supabase-js": "^2.26.0",
+		"leaflet-fullscreen": "^1.0.2",
 		"leaflet-search": "^3.0.9",
 		"leaflet.control.layers.tree": "^1.1.0",
 		"leaflet.locatecontrol": "^0.79.0",
