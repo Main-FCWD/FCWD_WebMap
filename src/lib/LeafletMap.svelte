@@ -63,7 +63,7 @@
 			// Attribution creation //
 			L.control
 				.attribution({
-					prefix: '<span>v 0.0.7</span>',
+					prefix: '<span>v 0.0.8</span>',
 					position: 'bottomleft'
 				})
 				.addTo(map);
@@ -249,9 +249,10 @@
 
 					conditionMarker.addTo(conditionLayers[features.properties.Condition]);
 
-					var popupContent = `<table><thead><tr><th colspan="2" style="padding-bottom:1em">${features.properties.Address}</th></tr></thead><tbody><tr><td style="text-align: right">Route: </td><td>${features.properties.Route}</td><tr><td style="text-align: right">Account #: </td><td>${features.properties['Account #']}</td></tr><tr><td style="padding-bottom: 1em; text-align: right">CID #: </td><td style="padding-bottom: 1em">${features.properties['CID #']}</td></tr><tr><td style="padding-bottom: 1em; text-align: right">Meter #: </td><td style="padding-bottom: 1em">${features.properties['Meter #']}</td></tr><tr><td style="text-align: right">Condition: </td><td>${features.properties.Condition}</td></tr></tbody></table>`;
+					var popupContent = `<table><thead><tr><th colspan="2" style="padding-bottom:1em">${features.properties.Address}</th></tr></thead><tbody><tr><td style="text-align: left">Route: </td><td>${features.properties.Route}</td><tr><td style="text-align: left">Account #: </td><td>${features.properties['Account #']}</td></tr><tr><td style="padding-bottom: 1em; text-align: left">CID #: </td><td style="padding-bottom: 1em">${features.properties['CID #']}</td></tr><tr><td style="padding-bottom: 1em; text-align: left">Meter #: </td><td style="padding-bottom: 1em">${features.properties['Meter #']}</td></tr><tr><td style="text-align: left">Condition: </td><td>${features.properties.Condition}</td></tr></tbody><tfoot><tr style="font-size:.75em;padding-top:1em"><td style="text-align:right">Updated: </td><td style="color:Red">${features.properties['Last Read']}</td></tr></tfoot></table>`;
 
 					marker.bindPopup(popupContent);
+					conditionMarker.bindPopup(popupContent);
 
 					markerCluster.addLayer(marker);
 				}
