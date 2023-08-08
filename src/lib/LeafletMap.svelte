@@ -47,7 +47,6 @@
 						[34.765142, -84.741472]
 					]);
 					map.setView([34.330395361608595, -85.2480697631836], 10);
-					console.log('little screen');
 				} else {
 					// Desktop or larger screen devices
 					map.setMaxBounds([
@@ -187,7 +186,7 @@
 						return 'DarkRed';
 					}
 					if (meterCondition == 'Manual Read') {
-						return 'Orange';
+						return 'DarkGoldenRod';
 					}
 					if (meterCondition == 'Crew Needed') {
 						return 'Black';
