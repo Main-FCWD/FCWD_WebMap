@@ -25,11 +25,15 @@
 			await import('@ansur/leaflet-pulse-icon/dist/L.Icon.Pulse.css');
 			await import('leaflet.markercluster/dist/leaflet.markercluster.js');
 			await import('leaflet.markercluster/dist/MarkerCluster.Default.css');
-			await import('https://api.mapbox.com/mapbox.js/plugins/leaflet-fullscreen/v1.0.1/Leaflet.fullscreen.min.js')
-			await import('leaflet-fullscreen/dist/leaflet.fullscreen.css')
+			await import('https://api.mapbox.com/mapbox.js/plugins/leaflet-fullscreen/v1.0.1/Leaflet.fullscreen.min.js');
+			await import('leaflet-fullscreen/dist/leaflet.fullscreen.css');
 
 			// initailizing map //
-			map = L.map(map, { zoomControl: true, maxZoom: 18, minZoom: 10 }).setView(
+			map = L.map(map, {
+				 zoomControl: true, 
+				 maxZoom: 18, 
+				 minZoom: 10
+				}).setView(
 				[34.330395361608595, -85.2480697631836],
 				0
 			);
@@ -67,7 +71,6 @@
 				})
 				.addTo(map);
 
-			L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
 
 			// Open Street Map Creation //
 			map.createPane('pane_OSM');
@@ -80,9 +83,9 @@
 				maxZoom: 18,
 				minNativeZoom: 8,
 				maxNativeZoom: 18
-			});
+			}).addTo(map);
 
-			// Dark Map Layer Creation // 
+			// Dark Map Layer Creation //
 			map.createPane('pane_OSM_dark');
 			var layer_OSM_dark = L.tileLayer(
 				'https://server.arcgisonline.com/arcgis/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}',
@@ -154,12 +157,7 @@
 
 			async function fetchData() {
 				// Fetch data from 'Meters' and 'GPS' tables
-				const { data: meterData, error: metersError } = await supabase.from('Meters').select(`
-					*,
-					GPS (
-						*
-					)
-					`);
+				const { data: meterData, error: metersError } = await supabase.from('Meters').select(`*,GPS(*)`);
 
 				if (meterData) {
 					// console.log(meterData);
@@ -172,14 +170,12 @@
 				return meterData;
 			}
 
-
 			// Addition of ALL Markers Upon Promise //
 			async function addMarkersToMap(map, meterGeoJSON) {
-
 				var routeLayers = {};
 				var conditionLayers = {};
 				var markerCluster = new window.L.markerClusterGroup();
-				
+				var allmeters = new L.layerGroup()
 
 				function ConditionColor(meterCondition) {
 					if (meterCondition == 'Dead Head') {
@@ -215,17 +211,18 @@
 
 					const marker = L.marker(features.geometry.coordinates, {
 						icon: markerIcon
-					}).bindTooltip(tooltip).openTooltip()
-						
+					})
+						.bindTooltip(tooltip)
+						.openTooltip();
+
+
 
 					if (!routeLayers[features.properties.Route]) {
 						routeLayers[features.properties.Route] = window.L.markerClusterGroup();
-
 					}
 
 					if (marker._latlng !== null) {
 						marker.addTo(routeLayers[features.properties.Route]);
-						
 					}
 
 					const conditionIcon = L.icon.pulse({
@@ -241,7 +238,6 @@
 						.bindTooltip(tooltip)
 						.openTooltip();
 
-
 					if (!conditionLayers[features.properties.Condition]) {
 						conditionLayers[features.properties.Condition] = L.layerGroup();
 					}
@@ -254,11 +250,14 @@
 					conditionMarker.bindPopup(popupContent);
 
 					markerCluster.addLayer(marker);
+					allmeters.addLayer(marker);
 				}
-
-
+				console.log('markerCluster: ', features);
 				// map.addLayer(markerCluster);
 
+				conditionLayers['Dead Head'].addTo(map);
+				conditionLayers['Manual Read'].addTo(map);
+				conditionLayers['Crew Needed'].addTo(map);
 
 				var mapRoutes = {
 					label: 'Meters',
@@ -367,8 +366,8 @@
 						},
 						{
 							label: 'Problems',
-							selectAllCheckbox: false,
-							collapsed: false,
+							selectAllCheckbox: true,
+							collapsed: true,
 							children: [
 								{ label: 'Dead Head', layer: conditionLayers['Dead Head'] },
 								{ label: 'Manual Read', layer: conditionLayers['Manual Read'] },
@@ -413,6 +412,24 @@
 					document.querySelector('body > div > main > section').removeChild(titleSpan);
 					console.log('Title Span Clicked!');
 				});
+
+				// Create the search control
+				// var searchControl = new L.Control.Search({
+				// 	layer: allmeters, // Use the marker cluster group for searching
+				// 	propertyName: 'Address', // Property to search in your marker data
+				// 	initial: false, // Disable initial search
+				// 	zoom: 12, // Zoom level for search results
+				// 	position: 'topleft' // Position of the search bar on the map
+				// });
+
+				// // Add the search control to the map
+				// map.addControl(searchControl);
+
+				// Listen for the search_locationfound event
+				// map.on('search_locationfound', function (e) {
+				// 	// Center the map on the found location
+				// 	map.setView(e.latlng, 12);
+				// });
 
 				// console.log("GeoJSON Data: ", geojson);
 			}
